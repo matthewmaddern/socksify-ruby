@@ -91,7 +91,7 @@ class SOCKSError < RuntimeError
   end
 end
 
-class TCPSocket
+class TCPSOCKSSocket
   @@socks_version ||= "5"
   
   def self.socks_version
@@ -223,8 +223,8 @@ class TCPSocket
     port = Socket.getservbyname(port) if port.is_a?(String)
     req = String.new
     Socksify::debug_debug "Sending destination address"
-    req << TCPSocket.socks_version
-    Socksify::debug_debug TCPSocket.socks_version.unpack "H*"
+    req << TCPSOCKSSocket.socks_version
+    Socksify::debug_debug TCPSOCKSSocket.socks_version.unpack "H*"
     req << "\001"
     req << "\000" if @@socks_version == "5"
     req << [port].pack('n') if @@socks_version =~ /^4/
@@ -320,7 +320,7 @@ end
 
 module Socksify
   def self.resolve(host)
-    s = TCPSocket.new
+    s = TCPSOCKSSocket.new
 
     begin
       req = String.new
@@ -350,15 +350,15 @@ module Socksify
   end
 
   def self.proxy(server, port)
-    default_server = TCPSocket::socks_server
-    default_port = TCPSocket::socks_port
+    default_server = TCPSOCKSSocket::socks_server
+    default_port = TCPSOCKSSocket::socks_port
     begin
-      TCPSocket::socks_server = server
-      TCPSocket::socks_port = port
+      TCPSOCKSSocket::socks_server = server
+      TCPSOCKSSocket::socks_port = port
       yield
     ensure
-      TCPSocket::socks_server = default_server
-      TCPSocket::socks_port = default_port
+      TCPSOCKSSocket::socks_server = default_server
+      TCPSOCKSSocket::socks_port = default_port
     end
   end
 end
