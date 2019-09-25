@@ -91,7 +91,7 @@ class SOCKSError < RuntimeError
   end
 end
 
-class TCPSOCKSSocket
+class TCPSOCKSSocket < TCPSocket
   @@socks_version ||= "5"
   
   def self.socks_version
